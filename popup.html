@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>插件弹窗</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            width: 200px;
+            padding: 10px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>插件控制面板</h3>
+    <div>
+        <input type="checkbox" id="dpdCheckbox">
+        <label for="dpdCheckbox">DPD单号截取</label>
+    </div>
+    <div>
+        <input type="checkbox" id="autoScanCheckbox">
+        <label for="autoScanCheckbox">自动开始扫描</label>
+    </div>
+    <div>
+        <input type="checkbox" id="shortcutCheckbox">
+        <label for="shortcutCheckbox">快捷键 （暂无法关闭）</label>
+    </div>
+    <div>
+        <input type="checkbox" id="initInputCheckbox">
+        <label for="initInputCheckbox">初始化输入框</label>
+    </div>
+    <div>
+        <input type="checkbox" id="ecSyncCheckoutCheckbox">
+        <label for="ecSyncCheckoutCheckbox">易仓同步签出</label>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>

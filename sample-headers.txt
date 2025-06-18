@@ -1,0 +1,18 @@
+// 示例HTTP请求头数据
+// 基于您提供的header信息创建的测试数据
+// 使用方法：复制此文件内容，在popup中点击"更新Request Header"按钮，然后粘贴
+
+POST /shipment/close-report/batch-order-checkout HTTP/1.1
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,de;q=0.7,fr;q=0.6
+Connection: keep-alive
+Content-Length: 49
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Cookie: size_unit=%7B%22CM%22%3A1%2C%22IN%22%3A0.3937008%2C%22FT%22%3A0.0328084%2C%22M%22%3A0.01%2C%22YD%22%3A0.0109361%2C%22MM%22%3A10%7D; weight_unit=%7B%22KG%22%3A1%2C%22OZ%22%3A35.2739619%2C%22LB%22%3A2.2046226%2C%22G%22%3A1000%7D; ont_use_ws_oss=0; A5=1; A6=1; A6-105x148=1; logistics_label=1; 50x25=1; 100x20=1; 100x30=1; 100x60=1; 50x30=1; 60x20=1; 60x30=1; 100x100=1; 100x150=1; 50x20=1; 80x50=1; us_letter=1; print_qc=1; abnormal=1; bag=1; invoice=1; stylus_printer=1; invoice_printer=1; A4(3)=1; A4(4)=1; 90x30=1; US_Letter(3)=1; US_Letter(4)=1; A4(3*9)=1; label80x80=1; label100x150=1; label100x210=1; label110x150=1; label113x150=1; CPDFPrinterOk=0; use_ws_oss=1; wmsPrinterOk=1; picking=4; picking2=4; other_attach_invoice=4; other_attach_carton=0; label100x100=0; A4=4; receiving=4; 70x30=0; 60x40=0; print_sku=0; current_operation_warehouse=22; defaultPickerId=65; update_warehouse_unit=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221970b7c4567104-06ea943129c9ebc-26011f51-2073600-1970b7c4568988%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTk3MGI3YzQ1NjcxMDQtMDZlYTk0MzEyOWM5ZWJjLTI2MDExZjUxLTIwNzM2MDAtMTk3MGI3YzQ1Njg5ODgifQ%3D%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%221970b7c4567104-06ea943129c9ebc-26011f51-2073600-1970b7c4568988%22%7D; LANGUAGE=zh_CN; PHPSESSID=s0l423u7td43lnjcjrcopku7tg; up_more_op=0; currentPageUrl=113%7B%7C%7D%2Fshipment%2Fclose-report%2Flist%3Fquick%3D113%26__token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NDk2NTQ0NTgsImV4cCI6MTc0OTc0MDg1OCwidXNlcklkIjoiNjUiLCJ1c2VyQ29kZSI6IkRFK0xDMDAwOSIsInRlbmFudElkIjoieXVuZHVhbiIsInN5c0NvbXBhbnlDb2RlIjoiWVVORFVBTiIsInN5c3RlbUNvbXBhbnlDb2RlIjoiWVVORFVBTiIsInN5c3RlbVR5cGUiOiJXTVMifQ.8bpre9ng2T5qM8WSSamqHIsmlw3lpjvUVc2BNR8TSg0%26__tenant_id%3Dyunduan%26__sys_company_code%3DYUNDUAN%7B%7C%7D%E4%BA%A4%E6%8E%A5%E7%8F%AD
+DNT: 1
+Host: wms.hzyunduan.com:8080
+Origin: http://wms.hzyunduan.com:8080
+Referer: http://wms.hzyunduan.com:8080/shipment/close-report/list?quick=113&__token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NDk2NTQ0NTgsImV4cCI6MTc0OTc0MDg1OCwidXNlcklkIjoiNjUiLCJ1c2VyQ29kZSI6IkRFK0xDMDAwOSIsInRlbmFudElkIjoieXVuZHVhbiIsInN5c0NvbXBhbnlDb2RlIjoiWVVORFVBTiIsInN5c3RlbUNvbXBhbnlDb2RlIjoiWVVORFVBTiIsInN5c3RlbVR5cGUiOiJXTVMifQ.8bpre9ng2T5qM8WSSamqHIsmlw3lpjvUVc2BNR8TSg0&__tenant_id=yunduan&__sys_company_code=YUNDUAN
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+X-Requested-With: XMLHttpRequest

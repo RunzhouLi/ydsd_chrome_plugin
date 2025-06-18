@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "云端时代自开发系统插件",
+  "version": "1.0",
+  "description": "实现网页自动化脚本和快捷键功能。",
+  "permissions": ["activeTab", "scripting", "storage", "cookies"],
+  "host_permissions": ["http://wms.hzyunduan.com:8080/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://z.zjydsd.com:233/*", "http://wms.hzyunduan.com:8080/*"],
+      "js": ["messageQueue.js", "dpd.js", "autoscan.js", "shortcut.js", "initInput.js", "ecSyncCheckout.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+F"
+      },
+      "description": "打开插件"
+    }
+  }
+}
