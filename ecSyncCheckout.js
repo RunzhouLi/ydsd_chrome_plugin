@@ -193,6 +193,30 @@
             const code = extractOrderCodeByTracking(trackingNo);
             if (code) {
                 console.log('检测到订单号:', code);
+                
+                // 复制订单号到剪切板
+                try {
+                    await navigator.clipboard.writeText(code);
+                    console.log('订单号已复制到剪切板:', code);
+                    if (window.msgQueue) msgQueue.push(`📋 订单号已复制: ${code}`);
+                } catch (err) {
+                    console.warn('复制到剪切板失败:', err);
+                    // 如果现代API失败，使用传统方法
+                    try {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = code;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        console.log('订单号已复制到剪切板(传统方法):', code);
+                        if (window.msgQueue) msgQueue.push(`📋 订单号已复制: ${code}`);
+                    } catch (fallbackErr) {
+                        console.error('复制到剪切板完全失败:', fallbackErr);
+                        if (window.msgQueue) msgQueue.push(`❌ 复制失败: ${fallbackErr.message}`);
+                    }
+                }
+                
                 if (ecSyncCheckoutEnabled) {
                     try {
                         const res = await sendEcSyncCheckout(code);

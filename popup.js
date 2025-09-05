@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const shortcutCheckbox = document.getElementById('shortcutCheckbox');
     const initInputCheckbox = document.getElementById('initInputCheckbox');
     const ecSyncCheckoutCheckbox = document.getElementById('ecSyncCheckoutCheckbox');
+    const rfidLoggerCheckbox = document.getElementById('rfidLoggerCheckbox');
+    const downloadLogsButton = document.getElementById('downloadLogsButton');
 
     // chrome.storage.sync.get('automationEnabled', function (data) { // Removed
     //     toggleButton.textContent = data.automationEnabled ? '停止自动化' : '启动自动化'; // Removed
@@ -26,6 +28,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     chrome.storage.sync.get('ecSyncCheckoutEnabled', function (data) {
         ecSyncCheckoutCheckbox.checked = !!data.ecSyncCheckoutEnabled;
+    });
+
+    chrome.storage.sync.get('rfidLoggerEnabled', function (data) {
+        rfidLoggerCheckbox.checked = !!data.rfidLoggerEnabled;
     });
 
     // toggleButton.addEventListener('click', function () { // Removed
@@ -93,6 +99,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleEcSyncCheckout', enabled: isEnabled });
                 }
             });
+        });
+    });
+
+    rfidLoggerCheckbox.addEventListener('change', function () {
+        const isEnabled = rfidLoggerCheckbox.checked;
+        chrome.storage.sync.set({ rfidLoggerEnabled: isEnabled }, function () {
+            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                if (tabs[0] && tabs[0].id) {
+                    chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleRfidLogger', enabled: isEnabled });
+                }
+            });
+        });
+    });
+
+    downloadLogsButton.addEventListener('click', function () {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            if (tabs[0] && tabs[0].id) {
+                chrome.tabs.sendMessage(tabs[0].id, { action: 'downloadRfidLogs' });
+            }
         });
     });
 })();

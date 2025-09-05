@@ -6,7 +6,8 @@ chrome.runtime.onInstalled.addListener(() => {
     autoScanEnabled: true,
     shortcutFeatureEnabled: true,
     initInputEnabled: true,
-    ecSyncCheckoutEnabled: true
+    ecSyncCheckoutEnabled: true,
+    rfidLoggerEnabled: true,
     // automationEnabled: true, // Removed
   });
 });
