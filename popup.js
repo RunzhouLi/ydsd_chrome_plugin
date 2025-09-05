@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // const toggleButton = document.getElementById('toggleButton'); // Removed
     const dpdCheckbox = document.getElementById('dpdCheckbox');
     const autoScanCheckbox = document.getElementById('autoScanCheckbox');
     const shortcutCheckbox = document.getElementById('shortcutCheckbox');
@@ -7,10 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const ecSyncCheckoutCheckbox = document.getElementById('ecSyncCheckoutCheckbox');
     const rfidLoggerCheckbox = document.getElementById('rfidLoggerCheckbox');
     const downloadLogsButton = document.getElementById('downloadLogsButton');
-
-    // chrome.storage.sync.get('automationEnabled', function (data) { // Removed
-    //     toggleButton.textContent = data.automationEnabled ? '停止自动化' : '启动自动化'; // Removed
-    // }); // Removed
 
     chrome.storage.sync.get('dpdFeatureEnabled', function (data) {
         dpdCheckbox.checked = !!data.dpdFeatureEnabled;
@@ -34,26 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
         rfidLoggerCheckbox.checked = !!data.rfidLoggerEnabled;
     });
 
-    // toggleButton.addEventListener('click', function () { // Removed
-    //     chrome.storage.sync.get('automationEnabled', function (data) { // Removed
-    //         const newEnabledState = !data.automationEnabled; // Removed
-    //         chrome.storage.sync.set({ automationEnabled: newEnabledState }, function () { // Removed
-    //             toggleButton.textContent = newEnabledState ? '停止自动化' : '启动自动化'; // Removed
-    //             chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) { // Removed
-    //                 if (tabs[0] && tabs[0].id) { // Removed
-    //                     chrome.tabs.sendMessage(tabs[0].id, { action: "toggleAutomation", enabled: newEnabledState }); // Removed
-    //                 } // Removed
-    //             }); // Removed
-    //         }); // Removed
-    //     }); // Removed
-    // }); // Removed
-
     dpdCheckbox.addEventListener('change', function () {
         const isEnabled = dpdCheckbox.checked;
         chrome.storage.sync.set({ dpdFeatureEnabled: isEnabled }, function () {
             chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                 if (tabs[0] && tabs[0].id) {
-                    chrome.tabs.sendMessage(tabs[0].id, { action: "toggleDpdFeature", enabled: isEnabled });
+                    chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleDpdFeature', enabled: isEnabled });
                 }
             });
         });
@@ -80,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
     initInputCheckbox.addEventListener('change', function () {
         const isEnabled = initInputCheckbox.checked;
         chrome.storage.sync.set({ initInputEnabled: isEnabled }, function () {
@@ -120,4 +102,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-})();
+});
+

@@ -7,17 +7,20 @@
     // 监听存储变化
     chrome.storage.sync.get({ ecSyncCheckoutEnabled: true }, data => {
         ecSyncCheckoutEnabled = data.ecSyncCheckoutEnabled;
-    });    // 监听来自popup的消息
+    });
+
+    // 监听来自popup的消息
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('ecSyncCheckout收到消息:', request);
-        
         if (request.action === 'toggleEcSyncCheckout') {
             ecSyncCheckoutEnabled = request.enabled;
             console.log('易仓同步签出功能状态:', ecSyncCheckoutEnabled);
             sendResponse({ status: '易仓同步签出功能更新' });
         }
         return true; // 保持消息通道开放
-    });    // 全新实现：最小、同源、凭证自动处理
+    });
+
+    // 同源直接请求；跨源交给 background service worker 代发
     function sendEcSyncCheckout(orderCode, { force = 0, csrfToken = '' } = {}) {
         if (!orderCode) {
             console.warn('orderCode 不能为空');
@@ -27,21 +30,15 @@
         const bodyParams = new URLSearchParams();
         bodyParams.append('orderCode[]', orderCode);
         bodyParams.append('force_checkout', force);
-        if (csrfToken) {
-            bodyParams.append('__token', csrfToken);
-        }
+        if (csrfToken) bodyParams.append('__token', csrfToken);
 
         const apiUrl = 'http://wms.hzyunduan.com:8080/shipment/close-report/batch-order-checkout';
-
-        // 判断当前是否处于 WMS 同源环境
         const sameOrigin = window.location.origin.startsWith('http://wms.hzyunduan.com:8080');
 
         if (sameOrigin) {
             return fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: bodyParams.toString(),
                 credentials: 'include'
             });
@@ -51,112 +48,29 @@
         return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage({
                 action: 'ecCheckout',
-                payload: {
-                    url: apiUrl,
-                    body: bodyParams.toString()
-                }
+                payload: { url: apiUrl, body: bodyParams.toString() }
             }, response => {
-                if (chrome.runtime.lastError) {
-                    return reject(chrome.runtime.lastError);
-                }
-                if (!response) {
-                    return reject(new Error('No response from background'));
-                }
-                if (response.error) {
-                    return reject(new Error(response.error));
-                }
+                if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+                if (!response) return reject(new Error('No response from background'));
+                if (response.error) return reject(new Error(response.error));
                 resolve(response);
             });
         });
     }
 
-    // 解析HTTP请求头信息
-    function parseHttpHeaders(headerText) {
-        console.log('解析HTTP请求头:', headerText);
-        
-        const headers = {};
-        let cookie = '';
-        let referer = '';
-        
-        try {
-            const lines = headerText.split('\n');
-            
-            for (const line of lines) {
-                const trimmedLine = line.trim();
-                if (!trimmedLine || trimmedLine.startsWith('POST ') || trimmedLine.startsWith('HTTP/')) {
-                    continue;
-                }
-                
-                const colonIndex = trimmedLine.indexOf(':');
-                if (colonIndex > 0) {
-                    const headerName = trimmedLine.substring(0, colonIndex).trim().toLowerCase();
-                    const headerValue = trimmedLine.substring(colonIndex + 1).trim();
-                    
-                    // 收集关键headers
-                    if (headerName === 'cookie') {
-                        cookie = headerValue;
-                    } else if (headerName === 'referer') {
-                        referer = headerValue;
-                    } else if (['accept', 'accept-language', 'content-type', 'x-requested-with'].includes(headerName)) {
-                        headers[headerName] = headerValue;
-                    }
-                }
-            }
-            
-            return { headers, cookie, referer };
-        } catch (error) {
-            console.error('解析header时出错:', error);
-            return null;
-        }
-    }
-
-    // 更新请求header的逻辑
-    function updateEcRequestHeader(headerData) {
-        console.log('updateEcRequestHeader函数被调用，headerData:', headerData);
-        
-        if (!headerData) {
-            alert('未提供header数据');
-            return null;
-        }
-        
-        try {
-            const parsedData = parseHttpHeaders(headerData);
-            
-            if (!parsedData) {
-                alert('解析header失败');
-                return null;
-            }
-            
-            console.log('解析后的数据:', parsedData);
-            
-            // 存储到localStorage
-            localStorage.setItem('ec_headers', JSON.stringify(parsedData.headers));
-            localStorage.setItem('ec_cookie', parsedData.cookie);
-            localStorage.setItem('ec_referer', parsedData.referer);
-            localStorage.setItem('ec_header_updated', new Date().toISOString());
-            
-            console.log('Header信息已更新并存储');
-            alert(`请求Header已更新成功！\n更新时间: ${new Date().toLocaleString()}`);
-            
-            return parsedData;
-        } catch (error) {
-            console.error('更新header时出错:', error);
-            alert('更新请求Header失败: ' + error.message);
-            return null;
-        }
-    }    // 将函数暴露到全局作用域，供其他脚本调用
+    // 将函数暴露到全局作用域，供其他脚本调用
     window.ecSyncCheckout = {
-        checkout: sendEcSyncCheckout,          // 单一入口
+        checkout: sendEcSyncCheckout, // 单一入口
         isEnabled: () => ecSyncCheckoutEnabled
     };
-    
+
     // 调试信息：确认脚本正确加载
     console.log('ecSyncCheckout模块已初始化', {
         enabled: ecSyncCheckoutEnabled,
         currentUrl: window.location.href,
         hasToken: !!new URLSearchParams(window.location.search).get('__token')
     });
-    
+
     function onDomReady(cb) {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', cb);
@@ -193,7 +107,7 @@
             const code = extractOrderCodeByTracking(trackingNo);
             if (code) {
                 console.log('检测到订单号:', code);
-                
+
                 // 复制订单号到剪切板
                 try {
                     await navigator.clipboard.writeText(code);
@@ -216,7 +130,7 @@
                         if (window.msgQueue) msgQueue.push(`❌ 复制失败: ${fallbackErr.message}`);
                     }
                 }
-                
+
                 if (ecSyncCheckoutEnabled) {
                     try {
                         const res = await sendEcSyncCheckout(code);
@@ -252,41 +166,6 @@
         return pOrder.textContent.replace('订单号:', '').trim();
     }
 
-    // 工具：把 Cookie 字符串写入 document.cookie
-    function applyEcCookies(cookieStr) {
-        if (!cookieStr) return;
-        cookieStr.split(';').forEach(segment => {
-            const [rawKey, ...rest] = segment.trim().split('=');
-            if (!rawKey || rest.length === 0) return;
-            const key = rawKey.trim();
-            const value = rest.join('=').trim();
-            // 仅覆盖关键登录态 Cookie
-            if (['PHPSESSID', '__token'].includes(key) || key.startsWith('sensorsdata')) {
-                document.cookie = `${key}=${value}; path=/`;
-            }
-        });
-    }
-
-    // 工具：提取 __token 值
-    function extractToken(cookieStr) {
-        const match = /__token=([^;]+)/.exec(cookieStr || '');
-        return match ? match[1] : null;
-    }
-
-    // 调整 referrer 里的 __token 参数
-    function updateReferrerToken(ref, cookieStr) {
-        try {
-            const token = extractToken(cookieStr);
-            if (!token) return ref;
-            const url = new URL(ref);
-            url.searchParams.set('__token', token);
-            return url.toString();
-        } catch (err) {
-            console.warn('更新 referrer token 失败:', err);
-            return ref;
-        }
-    }
-
     async function parseCheckoutResponse(resp) {
         try {
             // Response object (same-origin path)
@@ -304,3 +183,4 @@
         }
     }
 })();
+

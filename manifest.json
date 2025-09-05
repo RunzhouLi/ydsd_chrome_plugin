@@ -3,7 +3,7 @@
   "name": "云端时代自开发系统插件",
   "version": "1.1",
   "description": "实现网页自动化脚本和快捷键功能。",
-  "permissions": ["activeTab", "scripting", "storage", "cookies"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["http://wms.hzyunduan.com:8080/*"],
   "background": {
     "service_worker": "background.js"
